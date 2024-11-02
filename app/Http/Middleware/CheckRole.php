@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
+
 class CheckRole
 {
     /**
@@ -14,11 +15,10 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        if(!Auth::check() || !in_array(Auth::user()->role, $roles)){
-            return response()->json(['message' => 'Unauthorized'], 403);
-
+        if (!Auth::check() || !in_array(needle: Auth::user()->role, haystack: $roles)) {
+            return response()->json(data: ['message' => 'Unauthorized'], status: 403);
         }
         return $next($request);
     }

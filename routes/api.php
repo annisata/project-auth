@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,11 +15,17 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/admin', function (Request $request) {
-    // return $request->user();
-    return $response()->json(['message'=>'Welcome Admin']);
+Route::middleware('auth:sanctum', 'role:admin')->get('/admin', action: function (Request $request) {
+    return response()->json(['message'=> 'Welcome Admin !']);
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+});
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware(['auth:sanctum', 'role:admin'])->delete('/admin/users/{id}', [AuthController::class, 'deleteUser']);
+
+Route::middleware(['auth:sanctum', 'role:admin'])->get('/admin/users', [AuthController::class, 'getAllUsers']);
+
+Route::post('/register',[AuthController::class, 'register']);
+Route::post('/login',[AuthController::class, 'login']);
